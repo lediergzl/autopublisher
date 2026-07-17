@@ -48,4 +48,3 @@ npm run dev
   (`MAX_POSTS_PER_HOUR`, default 20/hora).
 - Solo se gestionan comunidades a las que el usuario ya pertenece (se leen
   vía su propia sesión de Telegram, nunca se buscan comunidades externas).
-"# autopublisher" 

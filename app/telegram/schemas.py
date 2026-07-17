@@ -15,3 +15,4 @@ class LoginCompleteIn(BaseModel):
     phone: str
     code: str
     phone_code_hash: str
+    password: str | None = None

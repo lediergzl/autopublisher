@@ -7,6 +7,8 @@ export default function Communities() {
   const [connected, setConnected] = useState<boolean | null>(null);
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [needsPassword, setNeedsPassword] = useState(false);
   const [loginState, setLoginState] = useState<any>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -35,10 +37,15 @@ export default function Communities() {
     setBusy(true);
     setError('');
     try {
-      await api.loginComplete({ ...loginState, phone, code });
+      await api.loginComplete({ ...loginState, phone, code, password: password || undefined });
       setConnected(true);
     } catch (e: any) {
-      setError(e.message);
+      if (e.detail === 'requires_password') {
+        setNeedsPassword(true);
+        setError('Tu cuenta tiene verificación en dos pasos. Ingresa tu contraseña de Telegram.');
+      } else {
+        setError(e.message);
+      }
     } finally {
       setBusy(false);
     }
@@ -79,7 +86,22 @@ export default function Communities() {
             ) : (
               <>
                 <input className="input" placeholder="Código recibido en Telegram" value={code} onChange={(e) => setCode(e.target.value)} />
-                <button className="btn" style={{ marginTop: 10 }} onClick={completeLogin} disabled={busy || !code}>
+                {needsPassword && (
+                  <input
+                    className="input"
+                    type="password"
+                    placeholder="Contraseña de verificación en dos pasos"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    style={{ marginTop: 10 }}
+                  />
+                )}
+                <button
+                  className="btn"
+                  style={{ marginTop: 10 }}
+                  onClick={completeLogin}
+                  disabled={busy || !code || (needsPassword && !password)}
+                >
                   Confirmar
                 </button>
               </>

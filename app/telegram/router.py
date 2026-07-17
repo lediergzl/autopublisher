@@ -26,8 +26,10 @@ async def login_complete(
 ):
     try:
         encrypted = await service.complete_login(
-            data.session_temporal, data.phone, data.code, data.phone_code_hash
+            data.session_temporal, data.phone, data.code, data.phone_code_hash, data.password
         )
+    except service.NeedsPasswordError:
+        raise HTTPException(422, "requires_password")
     except Exception as e:
         raise HTTPException(400, f"No se pudo completar el login: {e}")
 
